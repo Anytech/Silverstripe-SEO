@@ -2,6 +2,7 @@
 
 namespace PlasticStudio\SEO\Controller;
 
+use SilverStripe\Core\Environment;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
@@ -43,6 +44,13 @@ class RobotsTxtController extends Controller
     public function index(HTTPRequest $request)
     {
         if (SeoPageExtension::excludeSiteFromIndexing()) {
+            return $this->customise([
+                'Host' => Director::absoluteBaseUrl()
+            ])->renderWith('RobotsTxtDisallowAll');
+        }
+
+        $envType = Environment::getEnv('SS_ENVIRONMENT_TYPE');
+        if ($envType != 'live') {
             return $this->customise([
                 'Host' => Director::absoluteBaseUrl()
             ])->renderWith('RobotsTxtDisallowAll');
